@@ -1,0 +1,19 @@
+{
+  "name": "langchain-first-call-playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "tsx"
+  },
+  "dependencies": {
+    "@langchain/core": "^0.3.79",
+    "@langchain/openai": "^0.6.16",
+    "dotenv": "^17.2.3",
+    "langchain": "^0.3.36"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
