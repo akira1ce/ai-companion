@@ -1,0 +1,19 @@
+{
+  "name": "@ai-companion/prompt",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ai-companion/types": "*",
+    "@ai-companion/emotion": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
