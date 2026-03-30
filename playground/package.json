@@ -3,13 +3,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "run": "tsx"
+    "test": "tsx scripts/run.ts"
   },
   "dependencies": {
-    "@langchain/core": "^0.3.79",
+    "@langchain/classic": "^1.0.25",
+    "@langchain/cloudflare": "^1.0.4",
+    "@langchain/community": "^1.1.25",
+    "@langchain/core": "^1.1.36",
+    "@langchain/langgraph": "^1.2.6",
     "@langchain/openai": "^0.6.16",
+    "@langchain/pinecone": "^1.0.1",
+    "@pinecone-database/pinecone": "^7.1.0",
     "dotenv": "^17.2.3",
-    "langchain": "^0.3.36"
+    "fast-glob": "^3.3.3",
+    "inquirer": "^13.3.2",
+    "langchain": "^1.2.37",
+    "pdf-parse": "^2.4.5"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
