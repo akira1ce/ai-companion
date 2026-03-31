@@ -8,7 +8,7 @@ import { MessageBubble } from "./message-bubble";
 import type { Message } from "./message-bubble";
 import { EmotionBadge } from "./emotion-badge";
 
-const USER_ID = "user-demo";
+const USER_ID = "akira1ce";
 const SESSION_ID = `session-${Date.now()}`;
 
 export function ChatWindow() {

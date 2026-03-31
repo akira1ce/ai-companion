@@ -1,6 +1,7 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { JsonOutputParser } from '@langchain/core/output_parsers';
 import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { BaseCallbackHandler } from '@langchain/core/callbacks/base';
 import type { MemoryDocument } from '@ai-companion/types';
 import { randomUUID } from 'node:crypto';
 
@@ -25,12 +26,13 @@ export async function extractMemories(
   userId: string,
   userMessage: string,
   assistantReply: string,
+  callbacks: BaseCallbackHandler[] = [],
 ): Promise<MemoryDocument[]> {
   const conversation = `用户：${userMessage}\n助手：${assistantReply}`;
   const chain = prompt.pipe(model).pipe(new JsonOutputParser<ExtractedMemory[]>());
 
   try {
-    const items = await chain.invoke({ conversation });
+    const items = await chain.invoke({ conversation }, { callbacks, runName: 'memory-extractor' });
     if (!Array.isArray(items)) return [];
 
     return items

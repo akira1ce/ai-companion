@@ -2,17 +2,13 @@ import type { Context } from 'hono';
 import { HybridRetriever, MemoryWriter } from '@ai-companion/memory';
 import { EmotionFSM, IntimacySystem, applyDecay } from '@ai-companion/emotion';
 import { assemblePrompt } from '@ai-companion/prompt';
-import type {
-  ChatRequest,
-  ChatResponse,
-  EmotionContext,
-  UserProfile,
-} from '@ai-companion/types';
+import type { ChatRequest, ChatResponse, EmotionContext, UserProfile } from '@ai-companion/types';
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { Env } from '../index.js';
 import { createChatModel, createEmbeddings } from '../lib/model.js';
 import { classifyEmotionEvent } from '../lib/emotion-classifier.js';
 import { extractMemories } from '../lib/memory-extractor.js';
+import { createTracer } from '../lib/tracing.js';
 
 const fsm = new EmotionFSM();
 const intimacy = new IntimacySystem();
@@ -64,10 +60,17 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
   const env = c.env;
   const model = createChatModel(env);
   const embeddings = createEmbeddings(env);
+  const tracer = createTracer(env);
+  const callbacks = tracer ? [tracer] : [];
 
   const embedFn = { embed: (text: string) => embeddings.embedQuery(text) };
 
-  const retriever = new HybridRetriever({ vectorize: env.VECTORIZE, db: env.DB, kv: env.KV, embedFn });
+  const retriever = new HybridRetriever({
+    vectorize: env.VECTORIZE,
+    db: env.DB,
+    kv: env.KV,
+    embedFn,
+  });
   const writer = new MemoryWriter({ vectorize: env.VECTORIZE, db: env.DB, kv: env.KV, embedFn });
 
   // 1. Load + decay emotion
@@ -79,7 +82,7 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
 
   // 3. Parallel: classify emotion event + retrieve memories
   const [emotionEvent, memories] = await Promise.all([
-    classifyEmotionEvent(model, message),
+    classifyEmotionEvent(model, message, callbacks),
     retriever.retrieve({ text: message, userId, topK: 5 }),
   ]);
 
@@ -101,11 +104,10 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
   );
 
   // 7. Call LLM
-  const response = await model.invoke([
-    new SystemMessage(systemPrompt),
-    ...historyMessages,
-    new HumanMessage(message),
-  ]);
+  const response = await model.invoke(
+    [new SystemMessage(systemPrompt), ...historyMessages, new HumanMessage(message)],
+    { callbacks, runName: 'chat-completion', metadata: { userId, sessionId } },
+  );
   const reply = typeof response.content === 'string' ? response.content : String(response.content);
 
   // 8. Sync writes (session context + emotion state)
@@ -122,7 +124,7 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
 
   // 9. Async memory extraction (non-blocking)
   c.executionCtx.waitUntil(
-    extractMemories(model, userId, message, reply).then((docs) => {
+    extractMemories(model, userId, message, reply, callbacks).then((docs) => {
       if (docs.length > 0) return writer.writeMemoryAsync(userId, docs);
     }),
   );

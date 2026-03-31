@@ -10,6 +10,8 @@ export type Env = {
   DEEPSEEK_API_KEY: string;
   DEEPSEEK_BASE_URL: string;
   DEEPSEEK_MODEL: string;
+  LANGSMITH_API_KEY: string;
+  LANGSMITH_PROJECT: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();

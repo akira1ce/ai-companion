@@ -10,16 +10,17 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@ai-companion/types": "*",
     "@ai-companion/emotion": "*",
     "@ai-companion/memory": "*",
     "@ai-companion/prompt": "*",
+    "@ai-companion/types": "*",
     "@ai-sdk/openai": "^3.0.48",
     "@langchain/core": "^1.1.36",
-    "@langchain/openai": "^0.6.16",
     "@langchain/langgraph": "^1.2.6",
+    "@langchain/openai": "^0.6.16",
     "ai": "^6.0.141",
-    "hono": "^4.7.11"
+    "hono": "^4.7.11",
+    "langsmith": "^0.5.15"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250724.0",
