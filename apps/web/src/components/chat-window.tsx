@@ -3,22 +3,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { EmotionContext } from "@ai-companion/types";
 import type { EmotionState } from "@ai-companion/types";
-import { sendMessage } from "../lib/api";
+import { sendMessage, getMessages, getEmotion } from "../lib/api";
 import { MessageBubble } from "./message-bubble";
 import type { Message } from "./message-bubble";
 import { EmotionBadge } from "./emotion-badge";
 
 const USER_ID = "akira1ce";
-const SESSION_ID = `session-${Date.now()}`;
+const SESSION_ID = "default";
 
 export function ChatWindow() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "嗨～我在呢，今天怎么样？(＾▽＾)",
-      timestamp: Date.now(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [emotion, setEmotion] = useState<EmotionContext>({
@@ -29,6 +23,18 @@ export function ChatWindow() {
   });
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  // Load message history + emotion on mount
+  useEffect(() => {
+    Promise.all([getMessages(USER_ID), getEmotion(USER_ID)])
+      .then(([history, emo]) => {
+        if (history.length > 0) {
+          setMessages(history.map((m) => ({ role: m.role, content: m.content, timestamp: m.timestamp })));
+        }
+        setEmotion(emo);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

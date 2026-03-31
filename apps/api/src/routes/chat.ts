@@ -110,7 +110,8 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
   );
   const reply = typeof response.content === 'string' ? response.content : String(response.content);
 
-  // 8. Sync writes (session context + emotion state)
+  // 8. Sync writes (session context + emotion state + D1 messages)
+  const now = Date.now();
   await Promise.all([
     writer.writeSessionContext(userId, {
       messages: [
@@ -120,6 +121,14 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
       ].slice(-20), // keep last 20 turns
     }),
     saveEmotionContext(env.KV, userId, updatedEmotion),
+    env.DB.batch([
+      env.DB.prepare(
+        'INSERT INTO messages (user_id, session_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)',
+      ).bind(userId, sessionId, 'user', message, now),
+      env.DB.prepare(
+        'INSERT INTO messages (user_id, session_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)',
+      ).bind(userId, sessionId, 'assistant', reply, now + 1),
+    ]),
   ]);
 
   // 9. Async memory extraction (non-blocking)

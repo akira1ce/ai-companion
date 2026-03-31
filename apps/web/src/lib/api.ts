@@ -2,6 +2,12 @@ import type { ChatRequest, ChatResponse, EmotionContext } from '@ai-companion/ty
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8787';
 
+export interface HistoryMessage {
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: number;
+}
+
 export async function sendMessage(req: ChatRequest): Promise<ChatResponse> {
   const res = await fetch(`${API_URL}/chat`, {
     method: 'POST',
@@ -10,6 +16,13 @@ export async function sendMessage(req: ChatRequest): Promise<ChatResponse> {
   });
   if (!res.ok) throw new Error(`API error: ${res.status}`);
   return res.json() as Promise<ChatResponse>;
+}
+
+export async function getMessages(userId: string, limit = 50): Promise<HistoryMessage[]> {
+  const res = await fetch(`${API_URL}/messages/${userId}?limit=${limit}`);
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  const data = (await res.json()) as { messages: HistoryMessage[] };
+  return data.messages;
 }
 
 export async function getEmotion(userId: string): Promise<EmotionContext> {

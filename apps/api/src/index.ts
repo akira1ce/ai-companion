@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { handleChat } from './routes/chat.js';
+import { handleGetMessages } from './routes/messages.js';
 
 export type Env = {
   KV: KVNamespace;
@@ -22,6 +23,8 @@ app.use('*', cors({ origin: '*' }));
 app.get('/', (c) => c.json({ status: 'ok', service: 'ai-companion-api' }));
 
 app.post('/chat', handleChat);
+
+app.get('/messages/:userId', handleGetMessages);
 
 app.get('/emotion/:userId', async (c) => {
   const userId = c.req.param('userId');
