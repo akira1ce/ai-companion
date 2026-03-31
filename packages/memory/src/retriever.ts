@@ -92,7 +92,7 @@ export class HybridRetriever {
     const vector = await this.deps.embedFn.embed(query.text);
     const res = await this.deps.vectorize.query(vector, {
       topK: k,
-      filter: { userId: query.userId },
+      filter: { sessionId: query.sessionId },
     });
     return res.matches.map((m) => ({
       id: m.id,
@@ -110,11 +110,11 @@ export class HybridRetriever {
       .prepare(
         `SELECT id, type, content, metadata, created_at
          FROM memories
-         WHERE user_id = ? AND type IN ('fact', 'profile')
+         WHERE session_id = ? AND type IN ('fact', 'profile')
          ORDER BY created_at DESC
          LIMIT ?`,
       )
-      .bind(query.userId, k)
+      .bind(query.sessionId, k)
       .all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
 
     return rows.results.map((r) => ({
@@ -123,7 +123,7 @@ export class HybridRetriever {
       content: r.content,
       metadata: JSON.parse(r.metadata ?? '{}'),
       createdAt: r.created_at,
-      score: 1.0, // structured hits are high-confidence
+      score: 1.0,
     }));
   }
 
@@ -133,11 +133,11 @@ export class HybridRetriever {
       .prepare(
         `SELECT id, type, content, metadata, created_at
          FROM memories
-         WHERE user_id = ? AND type = 'summary'
+         WHERE session_id = ? AND type = 'summary'
          ORDER BY created_at DESC
          LIMIT ?`,
       )
-      .bind(query.userId, k)
+      .bind(query.sessionId, k)
       .all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
 
     return rows.results.map((r) => ({
@@ -152,7 +152,6 @@ export class HybridRetriever {
 
   // Channel 4: keyword full-text search
   private async keywordChannel(query: RetrievalQuery, k: number): Promise<MemoryDocument[]> {
-    // D1 FTS via LIKE — replace with FTS5 virtual table in production
     const terms = query.text.split(/\s+/).filter(Boolean).slice(0, 5);
     if (terms.length === 0) return [];
 
@@ -163,11 +162,11 @@ export class HybridRetriever {
       .prepare(
         `SELECT id, type, content, metadata, created_at
          FROM memories
-         WHERE user_id = ? AND (${conditions})
+         WHERE session_id = ? AND (${conditions})
          ORDER BY created_at DESC
          LIMIT ?`,
       )
-      .bind(query.userId, ...bindings, k)
+      .bind(query.sessionId, ...bindings, k)
       .all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
 
     return rows.results.map((r) => ({
