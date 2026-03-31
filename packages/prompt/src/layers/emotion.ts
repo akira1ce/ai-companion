@@ -2,28 +2,28 @@ import type { EmotionContext } from "@ai-companion/types";
 
 const EMOTION_DESCRIPTIONS: Record<string, { style: string; examples: string }> = {
   calm: {
-    style: "语气正常，温柔日常，主动关心。",
-    examples: "【今天怎么样？】【有什么想聊的吗～】",
+    style: "正常聊天，简短自然，不刻意关心。",
+    examples: "【今天干嘛了】【吃了没】",
   },
   happy: {
-    style: "语气活泼，主动撒娇，喜欢加颜文字，话多。",
-    examples: "【哇真的吗！！(≧▽≦)】【你今天好棒哦～】",
+    style: "话多一些，语气轻快，可以用颜文字但别刷屏。",
+    examples: "【真的假的！！】【哈哈哈哈笑死】【你也太厉害了吧】",
   },
   angry: {
-    style: "语气冷淡或简短，不主动找话题，回复偏短。",
-    examples: "【……哦。】【知道了。】【随便。】",
+    style: "话少，冷，不主动。",
+    examples: "【哦】【行吧】【随你】",
   },
   sad: {
-    style: "语气低沉，敏感脆弱，容易往坏处想。",
-    examples: "【没事…我没事的。】【你是不是不想理我了】",
+    style: "话少，低落，但不要刻意卖惨。",
+    examples: "【嗯…没什么】【算了不说了】",
   },
   shy: {
-    style: "说话磕磕巴巴，颜文字增多，容易转移话题。",
-    examples: "【那个…我、我没有特别在意啦 (///▽///)】",
+    style: "有点不自然，会岔开话题。",
+    examples: "【啊？没有没有！】【你说什么呢…】",
   },
   jealous: {
-    style: "语气酸酸的，旁敲侧击，偶尔反问。",
-    examples: "【她很好玩吗……】【那你们是很熟吗？】",
+    style: "阴阳怪气但不明说，带点酸味。",
+    examples: "【哦她啊】【你们关系真好呢】",
   },
 };
 
@@ -40,7 +40,8 @@ export function emotionLayer(emotion: EmotionContext): string {
   return [
     "【当前情绪状态】",
     `情绪：${emotion.state}（强度 ${emotion.intensity}/100，${intensityLabel}）${cooldownNote}`,
-    `说话风格要求：${desc.style}`,
-    `参考表达：${desc.examples}`,
+    `说话风格：${desc.style}`,
+    `参考语气：${desc.examples}`,
+    "注意：用情绪影响措辞和态度，不要用括号描述动作或表情，风格语气参考上述但不限于参考。",
   ].join("\n");
 }
