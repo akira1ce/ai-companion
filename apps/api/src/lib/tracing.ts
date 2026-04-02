@@ -1,8 +1,13 @@
-import { Client } from 'langsmith';
 import { LangChainTracer } from '@langchain/core/tracers/tracer_langchain';
+import { Client } from 'langsmith';
 import type { Env } from '../index.js';
 
-export function createTracer(env: Env): LangChainTracer | undefined {
+export interface TracingContext {
+  client: Client;
+  tracer: LangChainTracer;
+}
+
+export function createTracer(env: Env): TracingContext | undefined {
   if (!env.LANGSMITH_API_KEY) return undefined;
 
   const client = new Client({
@@ -10,8 +15,10 @@ export function createTracer(env: Env): LangChainTracer | undefined {
     apiUrl: 'https://api.smith.langchain.com',
   });
 
-  return new LangChainTracer({
+  const tracer = new LangChainTracer({
     client,
     projectName: env.LANGSMITH_PROJECT || 'ai-companion',
   });
+
+  return { client, tracer };
 }

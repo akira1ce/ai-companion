@@ -60,8 +60,8 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
 	const env = c.env;
 	const model = createChatModel(env);
 	const embeddings = createEmbeddings(env);
-	const tracer = createTracer(env);
-	const callbacks = tracer ? [tracer] : [];
+	const tracing = createTracer(env);
+	const callbacks = tracing ? [tracing.tracer] : [];
 
 	const embedFn = { embed: (text: string) => embeddings.embedQuery(text) };
 
@@ -137,9 +137,23 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
 
 	// 9. Async memory extraction (non-blocking)
 	c.executionCtx.waitUntil(
-		extractMemories(model, sessionId, message, reply, callbacks).then((docs) => {
-			if (docs.length > 0) return writer.writeMemoryAsync(sessionId, docs);
-		})
+		(async () => {
+			try {
+				const docs = await extractMemories(model, sessionId, message, reply, callbacks);
+				console.log("[memory-extractor] extracted docs", { sessionId, count: docs.length });
+
+				if (docs.length > 0) {
+					await writer.writeMemoryAsync(sessionId, docs);
+					console.log("[memory-extractor] memory write completed", { sessionId, count: docs.length });
+				}
+			} catch (error) {
+				console.error("[memory-extractor] async extraction failed", { sessionId, error });
+			} finally {
+				if (tracing) {
+					await tracing.client.awaitPendingTraceBatches();
+				}
+			}
+		})()
 	);
 
 	const result: ChatResponse = {

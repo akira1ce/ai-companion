@@ -1,30 +1,31 @@
 {
-  "name": "@ai-companion/api",
-  "version": "0.0.1",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "wrangler dev",
-    "build": "wrangler deploy --dry-run",
-    "deploy": "wrangler deploy",
-    "type-check": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@ai-companion/emotion": "*",
-    "@ai-companion/memory": "*",
-    "@ai-companion/prompt": "*",
-    "@ai-companion/types": "*",
-    "@ai-sdk/openai": "^3.0.48",
-    "@langchain/core": "^1.1.36",
-    "@langchain/langgraph": "^1.2.6",
-    "@langchain/openai": "^0.6.16",
-    "ai": "^6.0.141",
-    "hono": "^4.7.11",
-    "langsmith": "^0.5.15"
-  },
-  "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250724.0",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.20.5"
-  }
+	"name": "@ai-companion/api",
+	"version": "0.0.1",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev",
+		"build": "wrangler deploy --dry-run",
+		"deploy": "wrangler deploy",
+		"type-check": "tsc --noEmit",
+		"d1:local:migrate": "npx wrangler d1 execute ai-companion-db --local --file=./src/sql/schema.sql"
+	},
+	"dependencies": {
+		"@ai-companion/emotion": "*",
+		"@ai-companion/memory": "*",
+		"@ai-companion/prompt": "*",
+		"@ai-companion/types": "*",
+		"@ai-sdk/openai": "^3.0.48",
+		"@langchain/core": "^1.1.36",
+		"@langchain/langgraph": "^1.2.6",
+		"@langchain/openai": "^0.6.16",
+		"ai": "^6.0.141",
+		"hono": "^4.7.11",
+		"langsmith": "^0.5.15"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^4.20250724.0",
+		"typescript": "^5.9.3",
+		"wrangler": "^4.20.5"
+	}
 }
