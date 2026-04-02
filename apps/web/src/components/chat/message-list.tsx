@@ -23,8 +23,8 @@ export function MessageList({ messages, loading }: MessageListProps) {
 	const groups = groupMessages(messages);
 
 	return (
-		<ScrollArea className="flex-1">
-			<div className="flex flex-col gap-4 px-4 py-3">
+		<ScrollArea className="min-h-0 flex-1">
+			<div className="flex flex-col gap-4 px-4 py-3 pt-20">
 				{groups.map((group, gi) => {
 					const prevGroup = groups[gi - 1];
 					const showSeparator =

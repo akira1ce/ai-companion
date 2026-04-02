@@ -37,6 +37,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProp
 		<footer className="shrink-0 p-4">
 			<div className="flex items-end gap-2">
 				<textarea
+					autoFocus
 					ref={textareaRef}
 					value={value}
 					onChange={handleInput}

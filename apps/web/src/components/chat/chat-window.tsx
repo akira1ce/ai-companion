@@ -53,7 +53,7 @@ export function ChatWindow() {
 	}, [input, loading]);
 
 	return (
-		<div className="bg-chat-bg mx-auto flex h-dvh max-w-2xl flex-col">
+		<div className="bg-chat-bg relative mx-auto flex h-dvh max-w-2xl flex-col overflow-hidden">
 			<ChatHeader emotion={emotion} />
 			<MessageList messages={messages} loading={loading} />
 			<ChatInput value={input} onChange={setInput} onSubmit={submit} disabled={loading} />
