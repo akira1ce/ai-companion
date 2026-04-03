@@ -1,28 +1,30 @@
 {
-  "name": "langchain-first-call-playground",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "test": "tsx scripts/run.ts"
-  },
-  "dependencies": {
-    "@langchain/classic": "^1.0.25",
-    "@langchain/cloudflare": "^1.0.4",
-    "@langchain/community": "^1.1.25",
-    "@langchain/core": "^1.1.36",
-    "@langchain/langgraph": "^1.2.6",
-    "@langchain/openai": "^0.6.16",
-    "@langchain/pinecone": "^1.0.1",
-    "@pinecone-database/pinecone": "^7.1.0",
-    "dotenv": "^17.2.3",
-    "fast-glob": "^3.3.3",
-    "inquirer": "^13.3.2",
-    "langchain": "^1.2.37",
-    "pdf-parse": "^2.4.5"
-  },
-  "devDependencies": {
-    "@types/node": "^25.5.0",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
-  }
+	"name": "langchain-first-call-playground",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"test": "tsx scripts/run.ts"
+	},
+	"dependencies": {
+		"@langchain/classic": "^1.0.25",
+		"@langchain/cloudflare": "^1.0.4",
+		"@langchain/community": "^1.1.25",
+		"@langchain/core": "^1.1.36",
+		"@langchain/langgraph": "^1.2.6",
+		"@langchain/openai": "^0.6.16",
+		"@langchain/pinecone": "^1.0.1",
+		"@pinecone-database/pinecone": "^7.1.0",
+		"dotenv": "^17.2.3",
+		"fast-glob": "^3.3.3",
+		"langchain": "^1.2.37",
+		"pdf-parse": "^2.4.5"
+	},
+	"devDependencies": {
+		"@types/inquirer-autocomplete-prompt": "^3.0.3",
+		"@types/node": "^25.5.0",
+		"inquirer": "8",
+		"inquirer-autocomplete-prompt": "^3.0.1",
+		"tsx": "^4.20.6",
+		"typescript": "^5.9.3"
+	}
 }
