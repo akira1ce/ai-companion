@@ -1,16 +1,15 @@
-import { HybridRetriever, MemoryWriter } from "@ai-companion/memory";
 import type { MemoryDocument } from "@ai-companion/types";
 import type { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import type { ExecutionContext } from "@cloudflare/workers-types";
 import type { TracingContext } from "../../lib/tracing.js";
 import { extractMemories } from "../../lib/memory-extractor.js";
+import { MemoryRepository } from "../repositories/memory-repository.js";
 
 export class MemoryService {
 	constructor(
 		private params: {
-			retriever: HybridRetriever;
-			writer: MemoryWriter;
+			memoryRepository: MemoryRepository;
 			model: BaseChatModel;
 			callbacks?: BaseCallbackHandler[];
 			tracing?: TracingContext;
@@ -18,7 +17,7 @@ export class MemoryService {
 	) {}
 
 	async retrieve(message: string, sessionId: string): Promise<MemoryDocument[]> {
-		return this.params.retriever.retrieve({ text: message, sessionId, topK: 5 });
+		return this.params.memoryRepository.retrieve(message, sessionId);
 	}
 
 	async extract(sessionId: string, userMessage: string, assistantReply: string): Promise<MemoryDocument[]> {
@@ -26,8 +25,7 @@ export class MemoryService {
 	}
 
 	async writeExtracted(sessionId: string, docs: MemoryDocument[]): Promise<void> {
-		if (docs.length === 0) return;
-		await this.params.writer.writeMemoryAsync(sessionId, docs);
+		await this.params.memoryRepository.writeExtracted(sessionId, docs);
 	}
 
 	scheduleExtraction(params: {

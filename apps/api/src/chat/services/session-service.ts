@@ -1,15 +1,11 @@
-import { MemoryWriter } from "@ai-companion/memory";
 import type { EmotionContext } from "@ai-companion/types";
-import type { Env } from "../../index.js";
+import { MessageRepository } from "../repositories/message-repository.js";
 
 export class SessionService {
-	constructor(
-		private db: Env["DB"],
-		private writer: MemoryWriter
-	) {}
+	constructor(private messageRepository: MessageRepository) {}
 
 	async loadSessionMessages(sessionId: string): Promise<Array<{ role: "user" | "assistant"; content: string }>> {
-		const session = await this.writer.readSessionContext(sessionId);
+		const session = await this.messageRepository.loadSessionContext(sessionId);
 		return session.messages
 			.filter((message): message is { role: "user" | "assistant"; content: string } =>
 				message.role === "user" || message.role === "assistant"
@@ -24,28 +20,20 @@ export class SessionService {
 		emotion: EmotionContext;
 		now: number;
 	}): Promise<void> {
+		const session = await this.messageRepository.loadSessionContext(params.sessionId);
+
 		await Promise.all([
-			this.writer.writeSessionContext(params.sessionId, {
-				messages: [
-					...(await this.writer.readSessionContext(params.sessionId)).messages,
-					{ role: "user", content: params.userMessage },
-					{ role: "assistant", content: params.assistantReply },
-				].slice(-20),
+			this.messageRepository.saveSessionContext(params.sessionId, [
+				...session.messages,
+				{ role: "user", content: params.userMessage },
+				{ role: "assistant", content: params.assistantReply },
+			].slice(-20)),
+			this.messageRepository.appendMessages({
+				sessionId: params.sessionId,
+				userMessage: params.userMessage,
+				assistantReply: params.assistantReply,
+				now: params.now,
 			}),
-			this.db.batch([
-				this.db.prepare("INSERT INTO messages (session_id, role, content, created_at) VALUES (?, ?, ?, ?)").bind(
-					params.sessionId,
-					"user",
-					params.userMessage,
-					params.now
-				),
-				this.db.prepare("INSERT INTO messages (session_id, role, content, created_at) VALUES (?, ?, ?, ?)").bind(
-					params.sessionId,
-					"assistant",
-					params.assistantReply,
-					params.now + 1
-				),
-			]),
 		]);
 	}
 }

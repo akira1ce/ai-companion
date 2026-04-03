@@ -1,6 +1,6 @@
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import type { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
+import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 
 export class ChatService {
 	constructor(
@@ -19,7 +19,7 @@ export class ChatService {
 			[
 				new SystemMessage(input.systemPrompt),
 				...input.historyMessages.map((message) =>
-					message.role === "user" ? new HumanMessage(message.content) : new SystemMessage(message.content)
+					message.role === "user" ? new HumanMessage(message.content) : new AIMessage(message.content)
 				),
 				new HumanMessage(input.message),
 			],

@@ -4,6 +4,10 @@ import type { ExecutionContext } from "@cloudflare/workers-types";
 import type { Env } from "../../index.js";
 import { createChatModel, createEmbeddings } from "../../lib/model.js";
 import { createTracer } from "../../lib/tracing.js";
+import { EmotionRepository } from "../repositories/emotion-repository.js";
+import { MemoryRepository } from "../repositories/memory-repository.js";
+import { MessageRepository } from "../repositories/message-repository.js";
+import { ProfileRepository } from "../repositories/profile-repository.js";
 import { ChatService } from "../services/chat-service.js";
 import { EmotionService } from "../services/emotion-service.js";
 import { MemoryService } from "../services/memory-service.js";
@@ -40,16 +44,20 @@ export function createChatDeps(env: Env, executionCtx: ExecutionContext): ChatDe
 		embedFn,
 	});
 
-	const emotionService = new EmotionService(env.KV, model, callbacks);
+	const emotionRepository = new EmotionRepository(env.KV);
+	const profileRepository = new ProfileRepository(env.KV);
+	const memoryRepository = new MemoryRepository(retriever, writer);
+	const messageRepository = new MessageRepository(env.DB, writer);
+
+	const emotionService = new EmotionService(emotionRepository, profileRepository, model, callbacks);
 	const memoryService = new MemoryService({
-		retriever,
-		writer,
+		memoryRepository,
 		model,
 		callbacks,
 		tracing,
 	});
 	const promptService = new PromptService();
-	const sessionService = new SessionService(env.DB, writer);
+	const sessionService = new SessionService(messageRepository);
 	const chatService = new ChatService(model, callbacks);
 
 	return {

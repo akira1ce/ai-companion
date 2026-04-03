@@ -2,8 +2,9 @@ import { applyDecay, EmotionFSM, IntimacySystem } from "@ai-companion/emotion";
 import type { EmotionContext, EmotionEvent, UserProfile } from "@ai-companion/types";
 import type { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { Env } from "../../index.js";
 import { classifyEmotionEvent } from "../../lib/emotion-classifier.js";
+import { EmotionRepository } from "../repositories/emotion-repository.js";
+import { ProfileRepository } from "../repositories/profile-repository.js";
 
 const fsm = new EmotionFSM();
 const intimacy = new IntimacySystem();
@@ -22,13 +23,14 @@ const DEFAULT_PROFILE: UserProfile = {
 
 export class EmotionService {
 	constructor(
-		private kv: Env["KV"],
+		private emotionRepository: EmotionRepository,
+		private profileRepository: ProfileRepository,
 		private model: BaseChatModel,
 		private callbacks: BaseCallbackHandler[] = []
 	) {}
 
 	async loadEmotion(sessionId: string): Promise<EmotionContext> {
-		const raw = await this.kv.get(`emotion:${sessionId}`);
+		const raw = await this.emotionRepository.get(sessionId);
 		if (!raw) return { ...DEFAULT_EMOTION, updatedAt: Date.now() };
 
 		try {
@@ -39,7 +41,7 @@ export class EmotionService {
 	}
 
 	async loadUserProfile(sessionId: string): Promise<UserProfile> {
-		const raw = await this.kv.get(`profile:${sessionId}`);
+		const raw = await this.profileRepository.get(sessionId);
 		if (!raw) return { ...DEFAULT_PROFILE, id: sessionId };
 
 		try {
@@ -62,6 +64,6 @@ export class EmotionService {
 	}
 
 	async saveEmotion(sessionId: string, emotion: EmotionContext): Promise<void> {
-		await this.kv.put(`emotion:${sessionId}`, JSON.stringify(emotion));
+		await this.emotionRepository.save(sessionId, emotion);
 	}
 }
