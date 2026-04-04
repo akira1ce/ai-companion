@@ -19,6 +19,10 @@ export class SessionService {
 		return sessionId;
 	}
 
+	async listSessions(userId: string) {
+		return this.sessionRepository.listSessions(userId);
+	}
+
 	/** 加载 session messages */
 	async loadSessionMessages(sessionId: string): Promise<Array<{ role: "user" | "assistant"; content: string }>> {
 		const session = await this.messageRepository.loadSessionContext(sessionId);

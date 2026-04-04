@@ -72,6 +72,14 @@ export interface GetMessagesRequest {
 	limit: number;
 }
 
+export interface ListSessionsRequest {
+	userId: string;
+}
+
+export interface ListSessionsResponse {
+	sessions: Session[];
+}
+
 export interface ChatRequest {
 	userId: string;
 	message: string;
