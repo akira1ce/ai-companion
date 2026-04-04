@@ -53,12 +53,7 @@ export function createChatDeps(env: Env, executionCtx: ExecutionContext): ChatDe
 	const sessionRepository = new SessionRepository(env.DB);
 
 	const emotionService = new EmotionService(emotionRepository, profileRepository, model, callbacks);
-	const memoryService = new MemoryService({
-		memoryRepository,
-		model,
-		callbacks,
-		tracing,
-	});
+	const memoryService = new MemoryService(memoryRepository, model, callbacks, tracing);
 	const promptService = new PromptService();
 	const sessionService = new SessionService(messageRepository, sessionRepository);
 	const chatService = new ChatService(model, callbacks);

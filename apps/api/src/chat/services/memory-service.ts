@@ -8,27 +8,25 @@ import { MemoryRepository } from "../repositories/memory-repository.js";
 
 export class MemoryService {
 	constructor(
-		private params: {
-			memoryRepository: MemoryRepository;
-			model: BaseChatModel;
-			callbacks?: BaseCallbackHandler[];
-			tracing?: TracingContext;
-		}
+		private memoryRepository: MemoryRepository,
+		private model: BaseChatModel,
+		private callbacks?: BaseCallbackHandler[],
+		private tracing?: TracingContext
 	) {}
 
 	/** 检索记忆 */
 	async retrieve(message: string, sessionId: string): Promise<MemoryDocument[]> {
-		return this.params.memoryRepository.retrieve(message, sessionId);
+		return this.memoryRepository.retrieve(message, sessionId);
 	}
 
 	/** 提取记忆 */
 	async extract(sessionId: string, userMessage: string, assistantReply: string): Promise<MemoryDocument[]> {
-		return extractMemories(this.params.model, sessionId, userMessage, assistantReply, this.params.callbacks ?? []);
+		return extractMemories(this.model, sessionId, userMessage, assistantReply, this.callbacks ?? []);
 	}
 
 	/** 写入提取的记忆 */
 	async writeExtracted(sessionId: string, docs: MemoryDocument[]): Promise<void> {
-		await this.params.memoryRepository.writeExtracted(sessionId, docs);
+		await this.memoryRepository.writeExtracted(sessionId, docs);
 	}
 
 	/** 调度记忆提取 */
@@ -54,8 +52,8 @@ export class MemoryService {
 				} catch (error) {
 					console.error("[memory-extractor] async extraction failed", { sessionId: params.sessionId, error });
 				} finally {
-					if (this.params.tracing) {
-						await this.params.tracing.client.awaitPendingTraceBatches();
+					if (this.tracing) {
+						await this.tracing.client.awaitPendingTraceBatches();
 					}
 				}
 			})()
