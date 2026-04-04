@@ -8,7 +8,7 @@ export class SessionService {
 		private sessionRepository: SessionRepository
 	) {}
 
-	async resolveSession(params: { userId: string; sessionId?: string; now: number }): Promise<string> {
+	async resolveSession(params: { userId: string; sessionId: string | null; now: number }): Promise<string> {
 		const sessionId = params.sessionId?.trim() || crypto.randomUUID();
 		await this.sessionRepository.ensureSession({
 			sessionId,

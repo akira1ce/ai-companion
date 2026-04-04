@@ -7,8 +7,7 @@
 		"dev": "wrangler dev",
 		"build": "wrangler deploy --dry-run",
 		"deploy": "wrangler deploy",
-		"type-check": "tsc --noEmit",
-		"d1:local:migrate": "npx wrangler d1 execute ai-companion-db --local --file=./src/sql/schema.sql"
+		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@ai-companion/emotion": "*",
