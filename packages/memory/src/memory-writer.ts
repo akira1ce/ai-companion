@@ -1,5 +1,5 @@
 import type { MemoryDocument } from "@ai-companion/types";
-import type { D1Binding, EmbeddingFn, KVBinding, VectorizeBinding } from "./retriever.js";
+import type { D1Binding, EmbeddingFn, KVBinding, VectorizeBinding } from "./memory-retriever.js";
 
 export interface MemoryWriterDeps {
 	db: D1Binding;
@@ -12,6 +12,12 @@ export interface SessionContext {
 	messages: Array<{ role: string; content: string }>;
 }
 
+/**
+ * 记忆写入器
+ *
+ * 长期记忆：将记忆写入到 D1 和 Vectorize 中
+ * 短期记忆：将 session context 存储到 KV 中
+ */
 export class MemoryWriter {
 	constructor(private deps: MemoryWriterDeps) {}
 

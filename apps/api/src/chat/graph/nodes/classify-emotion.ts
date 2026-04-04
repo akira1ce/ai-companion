@@ -3,6 +3,7 @@ import { ChatGraphConfig } from "../config.js";
 import { ChatGraphState } from "../state.js";
 import { getDeps } from "../utils.js";
 
+/** 分类情绪 */
 export async function classifyEmotionNode(
 	state: typeof ChatGraphState.State,
 	config: RunnableConfig<typeof ChatGraphConfig.State>

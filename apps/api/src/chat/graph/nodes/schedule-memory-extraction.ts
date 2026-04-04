@@ -3,6 +3,7 @@ import { ChatGraphConfig } from "../config.js";
 import { ChatGraphState } from "../state.js";
 import { getDeps } from "../utils.js";
 
+/** 调度记忆提取 */
 export async function scheduleMemoryExtractionNode(
 	state: typeof ChatGraphState.State,
 	config: RunnableConfig<typeof ChatGraphConfig.State>

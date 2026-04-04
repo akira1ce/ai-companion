@@ -2,14 +2,14 @@
 
 import { useEffect, useRef } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import type { ChatMessage } from "@/lib/format-time";
 import { groupMessages, shouldShowTimeSeparator } from "@/lib/format-time";
+import type { HistoryMessage } from "@/services/type";
 import { MessageGroup } from "./message-group";
 import { TimeSeparator } from "./time-separator";
 import { TypingIndicator } from "./typing-indicator";
 
 interface MessageListProps {
-	messages: ChatMessage[];
+	messages: HistoryMessage[];
 	loading: boolean;
 }
 

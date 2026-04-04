@@ -1,9 +1,9 @@
 import type { MemoryDocument } from "@ai-companion/types";
+import type { ExecutionContext } from "@cloudflare/workers-types";
 import type { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
-import type { ExecutionContext } from "@cloudflare/workers-types";
-import type { TracingContext } from "../../lib/tracing.js";
 import { extractMemories } from "../../lib/memory-extractor.js";
+import type { TracingContext } from "../../lib/tracing.js";
 import { MemoryRepository } from "../repositories/memory-repository.js";
 
 export class MemoryService {
@@ -16,18 +16,22 @@ export class MemoryService {
 		}
 	) {}
 
+	/** 检索记忆 */
 	async retrieve(message: string, sessionId: string): Promise<MemoryDocument[]> {
 		return this.params.memoryRepository.retrieve(message, sessionId);
 	}
 
+	/** 提取记忆 */
 	async extract(sessionId: string, userMessage: string, assistantReply: string): Promise<MemoryDocument[]> {
 		return extractMemories(this.params.model, sessionId, userMessage, assistantReply, this.params.callbacks ?? []);
 	}
 
+	/** 写入提取的记忆 */
 	async writeExtracted(sessionId: string, docs: MemoryDocument[]): Promise<void> {
 		await this.params.memoryRepository.writeExtracted(sessionId, docs);
 	}
 
+	/** 调度记忆提取 */
 	scheduleExtraction(params: {
 		executionCtx: ExecutionContext;
 		sessionId: string;
@@ -42,7 +46,10 @@ export class MemoryService {
 
 					if (docs.length > 0) {
 						await this.writeExtracted(params.sessionId, docs);
-						console.log("[memory-extractor] memory write completed", { sessionId: params.sessionId, count: docs.length });
+						console.log("[memory-extractor] memory write completed", {
+							sessionId: params.sessionId,
+							count: docs.length,
+						});
 					}
 				} catch (error) {
 					console.error("[memory-extractor] async extraction failed", { sessionId: params.sessionId, error });

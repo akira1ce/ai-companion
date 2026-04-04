@@ -8,17 +8,22 @@ export async function handleChat(c: Context<{ Bindings: Env }>): Promise<Respons
 	const body = await c.req.json<ChatRequest>();
 	const { userId, message, sessionId } = body;
 
-	if (!userId || !message || !sessionId) {
-		return c.json({ error: "userId, message, sessionId are required" }, 400);
+	if (!userId || !message) {
+		return c.json({ error: "userId and message are required" }, 400);
 	}
 
 	const graph = createChatGraph();
 	const deps = createChatDeps(c.env, c.executionCtx);
+	const resolvedSessionId = await deps.sessionService.resolveSession({
+		userId,
+		sessionId,
+		now: Date.now(),
+	});
 	const result = await graph.invoke(
 		{
 			userId,
 			message,
-			sessionId,
+			sessionId: resolvedSessionId,
 		},
 		{
 			configurable: { deps },

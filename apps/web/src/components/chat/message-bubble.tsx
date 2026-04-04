@@ -1,8 +1,10 @@
-import type { BubblePosition, ChatMessage } from "@/lib/format-time";
 import { cn } from "@/lib/utils";
+import type { HistoryMessage } from "@/services/type";
+
+export type BubblePosition = "first" | "middle" | "last" | "single";
 
 interface MessageBubbleProps {
-	message: ChatMessage;
+	message: HistoryMessage;
 	position: BubblePosition;
 }
 

@@ -75,7 +75,7 @@ export interface GetMessagesRequest {
 export interface ChatRequest {
 	userId: string;
 	message: string;
-	sessionId: string;
+	sessionId?: string;
 }
 
 export interface ChatResponse {
@@ -94,4 +94,34 @@ export interface Session {
 	title: string;
 	createdAt: number;
 	updatedAt: number;
+}
+
+// 向量存储接口 — 由 Cloudflare 绑定在 API 层实现
+export interface VectorizeBinding {
+	query(
+		vector: number[],
+		options: { topK: number; filter?: Record<string, string> }
+	): Promise<{
+		matches: Array<{ id: string; score: number; metadata?: Record<string, unknown> }>;
+	}>;
+}
+
+// D1 数据库接口
+export interface D1Binding {
+	prepare(sql: string): {
+		bind(...args: unknown[]): {
+			all<T = Record<string, unknown>>(): Promise<{ results: T[] }>;
+		};
+	};
+}
+
+// KV 存储接口
+export interface KVBinding {
+	get(key: string): Promise<string | null>;
+	put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
+}
+
+// 文本嵌入接口
+export interface EmbeddingFn {
+	embed(text: string): Promise<number[]>;
 }

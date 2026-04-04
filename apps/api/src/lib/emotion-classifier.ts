@@ -56,6 +56,7 @@ const prompt = ChatPromptTemplate.fromMessages([
 	["human", "{input}"],
 ]);
 
+/** 分类情绪事件 */
 export async function classifyEmotionEvent(
 	model: BaseChatModel,
 	input: string,

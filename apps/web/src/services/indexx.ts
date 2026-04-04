@@ -5,16 +5,11 @@ import type {
 	GetEmotionRequest,
 	GetMessagesRequest,
 } from "@ai-companion/types";
+import { HistoryMessage } from "./type";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8787";
 
-export interface HistoryMessage {
-	role: "user" | "assistant";
-	content: string;
-	timestamp: number;
-}
-
-export async function sendMessage(req: ChatRequest): Promise<ChatResponse> {
+export async function apiSendMessage(req: ChatRequest): Promise<ChatResponse> {
 	const res = await fetch(`${API_URL}/chat`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -24,7 +19,7 @@ export async function sendMessage(req: ChatRequest): Promise<ChatResponse> {
 	return res.json() as Promise<ChatResponse>;
 }
 
-export async function getMessages(req: GetMessagesRequest): Promise<HistoryMessage[]> {
+export async function apiGetMessages(req: GetMessagesRequest): Promise<HistoryMessage[]> {
 	const res = await fetch(`${API_URL}/messages`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },
@@ -35,7 +30,7 @@ export async function getMessages(req: GetMessagesRequest): Promise<HistoryMessa
 	return data.messages;
 }
 
-export async function getEmotion(req: GetEmotionRequest): Promise<EmotionContext> {
+export async function apiGetEmotion(req: GetEmotionRequest): Promise<EmotionContext> {
 	const res = await fetch(`${API_URL}/emotion`, {
 		method: "POST",
 		headers: { "Content-Type": "application/json" },

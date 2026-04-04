@@ -29,6 +29,7 @@ export class EmotionService {
 		private callbacks: BaseCallbackHandler[] = []
 	) {}
 
+	/** 加载情绪 */
 	async loadEmotion(sessionId: string): Promise<EmotionContext> {
 		const raw = await this.emotionRepository.get(sessionId);
 		if (!raw) return { ...DEFAULT_EMOTION, updatedAt: Date.now() };
@@ -40,6 +41,7 @@ export class EmotionService {
 		}
 	}
 
+	/** 加载用户配置 */
 	async loadUserProfile(sessionId: string): Promise<UserProfile> {
 		const raw = await this.profileRepository.get(sessionId);
 		if (!raw) return { ...DEFAULT_PROFILE, id: sessionId };
@@ -51,10 +53,12 @@ export class EmotionService {
 		}
 	}
 
+	/** 分类情绪事件 */
 	async classifyEvent(message: string): Promise<EmotionEvent | null> {
 		return classifyEmotionEvent(this.model, message, this.callbacks);
 	}
 
+	/** 情绪状态机 transition */
 	transition(emotion: EmotionContext, event: EmotionEvent | null): EmotionContext {
 		if (!event) return emotion;
 
@@ -63,6 +67,7 @@ export class EmotionService {
 		return { ...nextContext, intimacy: nextIntimacy };
 	}
 
+	/** 保存情绪 */
 	async saveEmotion(sessionId: string, emotion: EmotionContext): Promise<void> {
 		await this.emotionRepository.save(sessionId, emotion);
 	}

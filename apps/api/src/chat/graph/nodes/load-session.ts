@@ -3,6 +3,7 @@ import { ChatGraphConfig } from "../config.js";
 import { ChatGraphState } from "../state.js";
 import { getDeps } from "../utils.js";
 
+/** 加载 session */
 export async function loadSessionNode(
 	state: typeof ChatGraphState.State,
 	config: RunnableConfig<typeof ChatGraphConfig.State>

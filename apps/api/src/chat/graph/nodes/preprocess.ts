@@ -3,6 +3,7 @@ import { ChatGraphConfig } from "../config.js";
 import { ChatGraphState } from "../state.js";
 import { getDeps } from "../utils.js";
 
+/** 预处理 */
 export async function preprocessNode(
 	state: typeof ChatGraphState.State,
 	config: RunnableConfig<typeof ChatGraphConfig.State>

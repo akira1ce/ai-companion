@@ -3,6 +3,7 @@ import { ChatGraphConfig } from "../config.js";
 import { ChatGraphState } from "../state.js";
 import { getDeps } from "../utils.js";
 
+/** 生成回复 */
 export async function generateReplyNode(
 	state: typeof ChatGraphState.State,
 	config: RunnableConfig<typeof ChatGraphConfig.State>

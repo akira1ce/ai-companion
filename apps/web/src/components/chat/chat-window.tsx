@@ -2,8 +2,8 @@
 
 import type { EmotionContext } from "@ai-companion/types";
 import { useCallback, useEffect, useState } from "react";
-import { getEmotion, getMessages, sendMessage } from "@/lib/api";
-import type { ChatMessage } from "@/lib/format-time";
+import { apiGetEmotion, apiGetMessages, apiSendMessage } from "@/services/indexx";
+import type { HistoryMessage } from "@/services/type";
 import { ChatHeader } from "./chat-header";
 import { ChatInput } from "./chat-input";
 import { MessageList } from "./message-list";
@@ -12,7 +12,7 @@ const USER_ID = "akira1ce";
 const SESSION_ID = "akira1ce-session-current";
 
 export function ChatWindow() {
-	const [messages, setMessages] = useState<ChatMessage[]>([]);
+	const [messages, setMessages] = useState<HistoryMessage[]>([]);
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [emotion, setEmotion] = useState<EmotionContext>({
@@ -23,7 +23,7 @@ export function ChatWindow() {
 	});
 
 	useEffect(() => {
-		Promise.all([getMessages({ sessionId: SESSION_ID, limit: 50 }), getEmotion({ sessionId: SESSION_ID })])
+		Promise.all([apiGetMessages({ sessionId: SESSION_ID, limit: 50 }), apiGetEmotion({ sessionId: SESSION_ID })])
 			.then(([history, emo]) => {
 				if (history.length > 0) {
 					setMessages(history.map((m) => ({ role: m.role, content: m.content, timestamp: m.timestamp })));
@@ -42,7 +42,7 @@ export function ChatWindow() {
 		setLoading(true);
 
 		try {
-			const res = await sendMessage({ userId: USER_ID, sessionId: SESSION_ID, message: text });
+			const res = await apiSendMessage({ userId: USER_ID, sessionId: SESSION_ID, message: text });
 			setMessages((prev) => [...prev, { role: "assistant", content: res.reply, timestamp: Date.now() }]);
 			setEmotion(res.emotion);
 		} catch {

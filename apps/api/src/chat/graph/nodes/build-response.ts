@@ -1,5 +1,6 @@
 import { ChatGraphState } from "../state.js";
 
+/** 构建响应 */
 export function buildResponseNode(state: typeof ChatGraphState.State) {
 	return {
 		response: {

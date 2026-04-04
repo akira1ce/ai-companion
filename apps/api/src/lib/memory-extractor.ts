@@ -38,6 +38,7 @@ const prompt = ChatPromptTemplate.fromMessages([
 	["human", "对话记录：\n{conversation}"],
 ]);
 
+/** 提取记忆 */
 export async function extractMemories(
 	model: BaseChatModel,
 	sessionId: string,

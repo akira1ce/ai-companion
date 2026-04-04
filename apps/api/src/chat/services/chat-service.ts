@@ -8,6 +8,7 @@ export class ChatService {
 		private callbacks: BaseCallbackHandler[] = []
 	) {}
 
+	/** 生成回复 */
 	async generateReply(input: {
 		userId: string;
 		sessionId: string;
