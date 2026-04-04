@@ -40,17 +40,17 @@ export class MemoryService {
 			(async () => {
 				try {
 					const docs = await this.extract(params.sessionId, params.userMessage, params.assistantReply);
-					console.log("[memory-extractor] extracted docs", { sessionId: params.sessionId, count: docs.length });
+					console.log("akira.scheduleExtraction.docs", { sessionId: params.sessionId, count: docs.length });
 
 					if (docs.length > 0) {
 						await this.writeExtracted(params.sessionId, docs);
-						console.log("[memory-extractor] memory write completed", {
+						console.log("akira.scheduleExtraction.memory.write.completed", {
 							sessionId: params.sessionId,
 							count: docs.length,
 						});
 					}
 				} catch (error) {
-					console.error("[memory-extractor] async extraction failed", { sessionId: params.sessionId, error });
+					console.error("akira.scheduleExtraction.async.extraction.failed", { sessionId: params.sessionId, error });
 				} finally {
 					if (this.tracing) {
 						await this.tracing.client.awaitPendingTraceBatches();

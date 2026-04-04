@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import type { EmotionContext } from "@ai-companion/types";
 import { MessageRepository } from "../repositories/message-repository.js";
 import { SessionRepository } from "../repositories/session-repository.js";
@@ -10,7 +9,7 @@ export class SessionService {
 	) {}
 
 	async resolveSession(params: { userId: string; sessionId?: string; now: number }): Promise<string> {
-		const sessionId = params.sessionId?.trim() || randomUUID();
+		const sessionId = params.sessionId?.trim() || crypto.randomUUID();
 		await this.sessionRepository.ensureSession({
 			sessionId,
 			userId: params.userId,

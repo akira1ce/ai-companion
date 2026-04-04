@@ -9,9 +9,11 @@ interface ChatInputProps {
 	onChange: (v: string) => void;
 	onSubmit: () => void;
 	disabled: boolean;
+	className?: string;
+	showSendButton?: boolean;
 }
 
-export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProps) {
+export function ChatInput({ value, onChange, onSubmit, disabled, className, showSendButton = true }: ChatInputProps) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	const handleInput = useCallback(
@@ -34,7 +36,7 @@ export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProp
 	const hasContent = value.trim().length > 0;
 
 	return (
-		<footer className="shrink-0 p-4">
+		<footer className={cn("w-full shrink-0 p-4", className)}>
 			<div className="flex items-end gap-2">
 				<textarea
 					autoFocus
@@ -47,18 +49,20 @@ export function ChatInput({ value, onChange, onSubmit, disabled }: ChatInputProp
 					disabled={disabled}
 					className="border-chat-input-border focus:border-imessage-blue placeholder:text-chat-muted max-h-[120px] min-h-[36px] flex-1 resize-none overflow-y-auto rounded-[20px] border bg-white px-4 py-2 text-[17px] leading-[22px] transition-all outline-none disabled:opacity-50"
 				/>
-				<button
-					onClick={onSubmit}
-					disabled={disabled || !hasContent}
-					className={cn(
-						"mb-[3px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full transition-all",
-						hasContent && !disabled
-							? "bg-imessage-blue hover:bg-imessage-blue-dark text-white"
-							: "cursor-not-allowed bg-gray-300 text-white opacity-50"
-					)}
-				>
-					<ArrowUp className="h-4 w-4 stroke-[2.5]" />
-				</button>
+				{showSendButton && (
+					<button
+						onClick={onSubmit}
+						disabled={disabled || !hasContent}
+						className={cn(
+							"mb-[3px] flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full transition-all",
+							hasContent && !disabled
+								? "bg-imessage-blue hover:bg-imessage-blue-dark text-white"
+								: "cursor-not-allowed bg-gray-300 text-white opacity-50"
+						)}
+					>
+						<ArrowUp className="h-4 w-4 stroke-[2.5]" />
+					</button>
+				)}
 			</div>
 		</footer>
 	);

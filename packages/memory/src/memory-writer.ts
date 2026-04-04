@@ -42,6 +42,7 @@ export class MemoryWriter {
 	/** D1 单条写入 memory */
 	private async writeOne(sessionId: string, doc: MemoryDocument): Promise<void> {
 		const metaStr = JSON.stringify(doc.metadata);
+		console.log("akira.db write", doc.id, sessionId, doc.content);
 		await this.deps.db
 			.prepare(
 				`INSERT OR REPLACE INTO memories (id, session_id, type, content, metadata, created_at)
@@ -52,12 +53,14 @@ export class MemoryWriter {
 
 		if (doc.type === "event" || doc.type === "keyword") {
 			const vector = await this.deps.embedFn.embed(doc.content);
+			console.log("akira.vector length", vector?.length);
 			await this.upsertVector(doc.id, vector, {
 				sessionId,
 				content: doc.content,
 				createdAt: String(doc.createdAt),
 				type: doc.type,
 			});
+			console.log("akira.upsertVector done");
 		}
 	}
 

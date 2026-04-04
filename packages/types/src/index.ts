@@ -83,7 +83,7 @@ export interface GetSessionsResponse {
 export interface ChatRequest {
 	userId: string;
 	message: string;
-	sessionId?: string;
+	sessionId: string | null;
 }
 
 export interface ChatResponse {

@@ -3,7 +3,6 @@ import type { BaseCallbackHandler } from "@langchain/core/callbacks/base";
 import type { BaseChatModel } from "@langchain/core/language_models/chat_models";
 import { JsonOutputParser } from "@langchain/core/output_parsers";
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { randomUUID } from "node:crypto";
 
 interface ExtractedMemory {
 	type: "event" | "fact" | "keyword";
@@ -56,7 +55,7 @@ export async function extractMemories(
 		return items
 			.filter((m) => m.content?.trim())
 			.map((m) => ({
-				id: randomUUID(),
+				id: crypto.randomUUID(),
 				type: m.type,
 				content: m.content.trim(),
 				metadata: { sessionId },

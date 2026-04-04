@@ -18,7 +18,6 @@ interface EmotionBadgeProps {
 
 export function EmotionBadge({ state, intensity }: EmotionBadgeProps) {
 	const info = EMOTION_MAP[state];
-	if (state === "calm" && intensity === 0) return null;
 
 	return (
 		<Badge variant="secondary" className={cn("gap-1 border-0 font-normal", info.className)}>
