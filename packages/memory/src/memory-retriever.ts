@@ -4,7 +4,7 @@ import type { MemoryDocument, RetrievalQuery } from "@ai-companion/types";
 export interface VectorizeBinding {
 	query(
 		vector: number[],
-		options: { topK: number; filter?: Record<string, string> }
+		options: { topK: number; filter?: Record<string, string>; returnMetadata?: "all" | "none" }
 	): Promise<{
 		matches: Array<{ id: string; score: number; metadata?: Record<string, unknown> }>;
 	}>;
@@ -63,6 +63,8 @@ export class HybridRetriever {
 
 	/** 检索记忆 */
 	async retrieve(query: RetrievalQuery): Promise<MemoryDocument[]> {
+		console.log("akira.retrieve.query", JSON.stringify(query));
+
 		const topK = query.topK ?? 5;
 
 		// 并行 4 通道检索
@@ -94,6 +96,8 @@ export class HybridRetriever {
 		if (temporal.status === "fulfilled") merge(temporal.value, this.weights.temporal);
 		if (keyword.status === "fulfilled") merge(keyword.value, this.weights.keyword);
 
+		console.log("akira.results", JSON.stringify([...results.values()]));
+
 		return [...results.values()]
 			.sort((a, b) => b.score - a.score)
 			.slice(0, topK)
@@ -106,7 +110,11 @@ export class HybridRetriever {
 		const res = await this.deps.vectorize.query(vector, {
 			topK: k,
 			filter: { sessionId: query.sessionId },
+			returnMetadata: "all",
 		});
+
+		console.log("akira.semanticChannel.res", JSON.stringify(res));
+
 		return res.matches.map((m) => ({
 			id: m.id,
 			type: "event",
@@ -123,12 +131,14 @@ export class HybridRetriever {
 			.prepare(
 				`SELECT id, type, content, metadata, created_at
          FROM memories
-         WHERE session_id = ? AND type IN ('fact', 'profile')
+         WHERE session_id = ? AND type IN ('fact', 'profile', 'event', 'keyword')
          ORDER BY created_at DESC
          LIMIT ?`
 			)
 			.bind(query.sessionId, k)
 			.all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
+
+		console.log("akira.structuredChannel.rows", JSON.stringify(rows));
 
 		return rows.results.map((r) => ({
 			id: r.id,
@@ -152,6 +162,8 @@ export class HybridRetriever {
 			)
 			.bind(query.sessionId, k)
 			.all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
+
+		console.log("akira.temporalChannel.rows", JSON.stringify(rows));
 
 		return rows.results.map((r) => ({
 			id: r.id,
@@ -181,6 +193,8 @@ export class HybridRetriever {
 			)
 			.bind(query.sessionId, ...bindings, k)
 			.all<{ id: string; type: string; content: string; metadata: string; created_at: number }>();
+
+		console.log("akira.keywordChannel.rows", JSON.stringify(rows));
 
 		return rows.results.map((r) => ({
 			id: r.id,

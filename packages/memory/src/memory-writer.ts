@@ -66,7 +66,9 @@ export class MemoryWriter {
 
 	/** Vectorize 单条写入向量 */
 	private async upsertVector(id: string, vector: number[], metadata: Record<string, string>): Promise<void> {
+		console.log("akira.upsertVector input", id, vector?.length, metadata);
 		// @ts-expect-error — VectorizeIndex.upsert is not in the minimal interface
 		await (this.deps.vectorize as { upsert: Function }).upsert([{ id, values: vector, metadata }]);
+		console.log("akira.upsertVector done");
 	}
 }
