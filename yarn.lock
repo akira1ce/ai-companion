@@ -35,6 +35,11 @@
   dependencies:
     json-schema "^0.4.0"
 
+"@akira1ce/r-hooks@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@akira1ce/r-hooks/-/r-hooks-1.2.2.tgz#44224b687d6e534c9ecc7e030d27c6dd9c20f9de"
+  integrity sha512-gNH1cX2WLQXAE81PuboWdw7nM5prSTwo5xDFOL/iwlqYBiT9SXluLsxX/Z5u6ogQyE8SPCc8Hvp9CE2ZvDkWQw==
+
 "@alloc/quick-lru@^5.2.0":
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/@alloc/quick-lru/-/quick-lru-5.2.0.tgz#7bf68b20c0a350f936915fcae06f58e32007ce30"

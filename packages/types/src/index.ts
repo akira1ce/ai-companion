@@ -72,11 +72,11 @@ export interface GetMessagesRequest {
 	limit: number;
 }
 
-export interface ListSessionsRequest {
+export interface GetSessionsRequest {
 	userId: string;
 }
 
-export interface ListSessionsResponse {
+export interface GetSessionsResponse {
 	sessions: Session[];
 }
 

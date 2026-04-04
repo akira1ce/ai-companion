@@ -1,10 +1,10 @@
-import type { ListSessionsRequest, ListSessionsResponse } from "@ai-companion/types";
+import type { GetSessionsRequest, GetSessionsResponse } from "@ai-companion/types";
 import type { Context } from "hono";
-import type { Env } from "../index.js";
 import { createChatDeps } from "../chat/runtime/create-chat-deps.js";
+import type { Env } from "../index.js";
 
-export async function handleListSessions(c: Context<{ Bindings: Env }>): Promise<Response> {
-	const body = await c.req.json<ListSessionsRequest>();
+export async function handleGetSessions(c: Context<{ Bindings: Env }>): Promise<Response> {
+	const body = await c.req.json<GetSessionsRequest>();
 	const { userId } = body;
 
 	if (!userId) {
@@ -13,5 +13,5 @@ export async function handleListSessions(c: Context<{ Bindings: Env }>): Promise
 
 	const deps = createChatDeps(c.env, c.executionCtx);
 	const sessions = await deps.sessionService.listSessions(userId);
-	return c.json({ sessions } satisfies ListSessionsResponse);
+	return c.json({ sessions } satisfies GetSessionsResponse);
 }

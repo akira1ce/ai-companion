@@ -4,7 +4,7 @@ import { logger } from "hono/logger";
 import { handleChat } from "./routes/chat.js";
 import { handleGetEmotion } from "./routes/emotion.js";
 import { handleGetMessages } from "./routes/messages.js";
-import { handleListSessions } from "./routes/sessions.js";
+import { handleGetSessions } from "./routes/sessions.js";
 
 export type Env = {
 	KV: KVNamespace;
@@ -29,7 +29,7 @@ app.post("/chat", handleChat);
 app.post("/messages", handleGetMessages);
 
 app.post("/emotion", handleGetEmotion);
-app.post("/sessions", handleListSessions);
+app.post("/sessions", handleGetSessions);
 
 export type AppType = typeof app;
 export default app;
