@@ -11,7 +11,7 @@ import { MessageList } from "./message-list";
 const USER_ID = "akira1ce";
 const SESSION_ID = "akira1ce-session-current";
 
-export function ChatWindow() {
+export function ChatPanel() {
 	const [messages, setMessages] = useState<HistoryMessage[]>([]);
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
