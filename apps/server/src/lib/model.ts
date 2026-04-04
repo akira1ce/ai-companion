@@ -5,9 +5,9 @@ import { createCloudflareEmbeddings } from "./embeddings.js";
 /** 创建 chat model */
 export function createChatModel(env: Env) {
 	return new ChatOpenAI({
-		model: env.OPENAI_MODEL,
-		apiKey: env.OPENAI_API_KEY,
-		configuration: { baseURL: env.OPENAI_BASE_URL },
+		model: env.DEEPSEEK_MODEL,
+		apiKey: env.DEEPSEEK_API_KEY,
+		configuration: { baseURL: env.DEEPSEEK_BASE_URL },
 	});
 }
 
@@ -15,8 +15,8 @@ export function createChatModel(env: Env) {
 // export function createEmbeddings(env: Env) {
 // 	return new OpenAIEmbeddings({
 // 		model: "text-embedding-3-small",
-// 		apiKey: env.OPENAI_API_KEY,
-// 		configuration: { baseURL: env.OPENAI_BASE_URL },
+// 		apiKey: env.DEEPSEEK_API_KEY,
+// 		configuration: { baseURL: env.DEEPSEEK_BASE_URL },
 // 	});
 // }
 
